@@ -2,22 +2,24 @@ from dash import Dash, html, dcc, callback, Output, Input
 import plotly.express as px
 import pandas as pd
 
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder_unfiltered.csv')
+df = pd.read_csv('MSFT.csv')
+
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.H1(children='Title of Dash App', style={'textAlign':'center'}),
-    dcc.Dropdown(df.country.unique(), 'Canada', id='dropdown-selection'),
+    html.Div(children='Stock Prices'),
+    html.Hr(),
+    dcc.RadioItems(options=['Open', 'High', 'Low','Close'], value='Open', id='controls-and-radio-item'),
     dcc.Graph(id='graph-content')
 ])
 
 @callback(
-    Output('graph-content', 'figure'),
-    Input('dropdown-selection', 'value')
+    Output(component_id='graph-content', component_property='figure'),
+    Input(component_id='controls-and-radio-item', component_property='value')
 )
-def update_graph(value):
-    dff = df[df.country==value]
-    return px.line(dff, x='year', y='pop')
+def update_graph(col_chosen):
+    fig = px.line(df,x='Date',y=col_chosen)
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
