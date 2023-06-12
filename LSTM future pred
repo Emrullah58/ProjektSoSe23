@@ -3,13 +3,13 @@ import math
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential 
+from keras.models import Sequential, load_model
 from keras.layers import Dense, LSTM
 import matplotlib.pyplot as plt
 plt.style.use('fivethirtyeight')
 
 #Get the stock quote
-df = pd.read_csv('DAX.csv')
+df = pd.read_csv('TSLA'.csv')
 
 #Create a new dataframe with only the 'Close' column
 data = df.filter(['Close'])
@@ -63,6 +63,8 @@ model.compile(optimizer='adam', loss='mean_squared_error')
 
 #Train the model
 model.fit(x_train, y_train, batch_size=1, epochs=1)
+model.save('stock_predict.h5')
+model = load_model('stock_predict.h5')
 
 #Create the testing data set
 #Create a new array containing scaled values from index 1738 to 2247
@@ -102,7 +104,7 @@ plt.plot(valid[['Close', 'Predictions']])
 plt.legend(['Train', 'Validation', 'Predictions'], loc='lower right')
 plt.show()
 
-X_FUTURE = 100
+X_FUTURE = 5
 predictions = np.array([])
 last = x_test[-1]
 for i in range(X_FUTURE):
